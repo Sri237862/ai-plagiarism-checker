@@ -1,15 +1,11 @@
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from nltk.tokenize import sent_tokenize
-import nltk
 import PyPDF2
 import docx
 import matplotlib.pyplot as plt
 
-nltk.download('punkt', quiet=True)
-
-st.title("AI Plagiarism Checker with Visualization")
+st.title("AI Plagiarism Checker")
 
 # ---------- File Reading ----------
 
@@ -69,35 +65,7 @@ def calculate_similarity(t1, t2):
     return similarity[0][1] * 100
 
 
-# ---------- Sentence Detection ----------
-
-def sentence_similarity(t1, t2):
-
-    s1 = sent_tokenize(t1)
-    s2 = sent_tokenize(t2)
-
-    copied = []
-
-    for a in s1:
-        for b in s2:
-
-            if not a.strip() or not b.strip():
-                continue
-
-            try:
-                vectorizer = TfidfVectorizer().fit_transform([a, b])
-                sim = cosine_similarity(vectorizer)[0][1]
-
-                if sim > 0.6:
-                    copied.append(a)
-
-            except:
-                continue
-
-    return copied
-
-
-# ---------- Visualization ----------
+# ---------- Chart ----------
 
 def similarity_chart(score):
 
@@ -105,19 +73,18 @@ def similarity_chart(score):
     values = [score, 100-score]
 
     fig, ax = plt.subplots()
-
     ax.bar(labels, values)
-
     ax.set_ylabel("Percentage")
     ax.set_title("Plagiarism Analysis")
 
     st.pyplot(fig)
 
 
-# ---------- Check Button ----------
+# ---------- Button ----------
 
 if st.button("Check Plagiarism"):
 
+    # If files uploaded → use them
     if file1 and file2:
         text1 = extract_text(file1)
         text2 = extract_text(file2)
@@ -141,15 +108,3 @@ if st.button("Check Plagiarism"):
             st.warning("Moderate Similarity")
         else:
             st.success("Low Similarity")
-
-        st.subheader("Copied Sentences")
-
-        copied = sentence_similarity(text1, text2)
-
-        if copied:
-
-            for sentence in copied:
-                st.markdown(f"<span style='color:red'>{sentence}</span>", unsafe_allow_html=True)
-
-        else:
-            st.write("No copied sentences detected")

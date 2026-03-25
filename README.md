@@ -10,7 +10,7 @@ The system calculates similarity using **TF-IDF vectorization** and **Cosine Sim
 
 Try the application here:
 
-https://ai-plagiarism-checker-hg7v.onrender.com
+ https://ai-plagiarism-checker-hg7v.onrender.com
 
 ---
 
